@@ -2,69 +2,118 @@ import React, { Component } from 'react'
 import { Text, View, StyleSheet, TouchableOpacity } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
 
-const CustomHeader = ({ title, subtitle }) => (
+import Result from './Result'
+
+const CustomHeader = ({ title, numOfQuestions, current }) => (
   <View style={styles.headerContainer}>
     <Text style={styles.headerTitle}>{title}</Text>
-    <Text style={styles.headerSubtitle}>{subtitle}</Text>
+    {current <= numOfQuestions 
+      ? (
+        <Text style={styles.headerSubtitle}>{current} of {numOfQuestions}</Text>
+      )
+      : (
+        <Text style={styles.headerSubtitle}>Result</Text>
+      )
+    }
+    
   </View>
 );
 
 export class Quiz extends Component {
-  static navigationOptions = {
-    headerTitle: <CustomHeader title="Quiz" subtitle="1 of 2" />,
-  };
-
   state = {
     flipped: false,
+    correct: 0,
+    incorrect: 0,
   }
 
-  render() {
-    return (
-      <View style={styles.container}>
-      {this.state.flipped === false 
-        ? (
-            <View>
-              <Text style={styles.questionText}>Does React Native Work with Android?</Text>
-              <TouchableOpacity style={styles.flipBtn} onPress={()=> this.setState(()=> ({ flipped: true }))}>
-                <Text style={styles.flipBtnText}>See Answer</Text>
-                <Ionicons style={styles.flipBtnIcon} name="md-sync" />
-              </TouchableOpacity>
-            </View>
-          )
-        : (
-            <View>
-              <Text style={styles.answerText}>Yes!</Text>
-              <TouchableOpacity style={[styles.flipBtn, {marginBottom: 50,}]} onPress={()=> this.setState(()=> ({ flipped: false }))}>
-                <Text style={styles.flipBtnText}>Back To Question</Text>
-                <Ionicons style={styles.flipBtnIcon} name="md-sync" />
-              </TouchableOpacity>
-
-              <View style={styles.actionBtnContainer}>
-            
-                <View style={{borderBottomWidth: 1, borderBottomColor: '#b1b1b2', width: 250}}>
-                  <TouchableOpacity onPress={this.handleCorrectAnswer} >
-                    <View style={[styles.btnContent, {paddingBottom: 10, justifyContent:'center'}]}>
-                      <Ionicons style={[styles.btnText, styles.btnTextIcon, {color: '#7ED321'}]} name="md-checkmark" />
-                      <Text style={styles.btnText}>Correct</Text>
-                    </View>
-                  </TouchableOpacity>
-                </View>
-
-                <View>
-                  <TouchableOpacity onPress={this.handleIncorrectAnswer}>
-                    <View style={[styles.btnContent, {paddingTop: 10}]}>
-                      <Ionicons style={[styles.btnText, styles.btnTextIcon, {color: 'tomato'}]} name="md-close" />
-                      <Text style={styles.btnText}>Incorrect</Text>
-                    </View>
-                  </TouchableOpacity>
-                </View>
-
-              </View>
-            </View>
-          )
+  static navigationOptions = ({navigation}) => {
+    const {params = {}} = navigation.state;
+      return {
+        headerTitle: <CustomHeader title="Quiz" numOfQuestions={params.deck.questions.length} current={params.current} />,
       }
-      </View>
-    )
+  }
+
+  componentDidMount = () => {
+    this.props.navigation.setParams({
+      current: 1
+    })
+  }
+
+  nextQuestion = () => {
+    const { current } = this.props.navigation.state.params
+    this.props.navigation.setParams({
+      current: current+1
+    })
+  }
+
+  handleCorrectAnswer = () => {
+    this.setState(()=> ({ correct: this.state.correct+1, flipped: !this.state.flipped }))
+    this.nextQuestion()
+  }
+  
+  handleIncorrectAnswer = () => {
+    this.setState(()=> ({ incorrect: this.state.incorrect+1, flipped: !this.state.flipped }))
+    this.nextQuestion()
+  }
+  
+
+  render() {
+    const { deck, current } = this.props.navigation.state.params
+
+    if( current > deck.questions. length ) {
+      return <Result correct={this.state.correct} total={deck.questions.length} />
+    }
+    
+    if(!isNaN(current)){
+      const {question, answer} = deck.questions[current-1]
+      return (
+        <View style={styles.container}>
+        {this.state.flipped === false 
+          ? (
+              <View>
+                <Text style={styles.questionText}>{question}</Text>
+                <TouchableOpacity style={styles.flipBtn} onPress={()=> this.setState(()=> ({ flipped: true }))}>
+                  <Text style={styles.flipBtnText}>See Answer</Text>
+                  <Ionicons style={styles.flipBtnIcon} name="md-sync" />
+                </TouchableOpacity>
+              </View>
+            )
+          : (
+              <View>
+                <Text style={styles.answerText}>{answer}</Text>
+                <TouchableOpacity style={[styles.flipBtn, {marginBottom: 50,}]} onPress={()=> this.setState(()=> ({ flipped: false }))}>
+                  <Text style={styles.flipBtnText}>Back To Question</Text>
+                  <Ionicons style={styles.flipBtnIcon} name="md-sync" />
+                </TouchableOpacity>
+  
+                <View style={styles.actionBtnContainer}>
+              
+                  <View style={{borderBottomWidth: 1, borderBottomColor: '#b1b1b2', width: 250}}>
+                    <TouchableOpacity onPress={this.handleCorrectAnswer} >
+                      <View style={[styles.btnContent, {paddingBottom: 10, justifyContent:'center'}]}>
+                        <Ionicons style={[styles.btnText, styles.btnTextIcon, {color: '#7ED321'}]} name="md-checkmark" />
+                        <Text style={styles.btnText}>Correct</Text>
+                      </View>
+                    </TouchableOpacity>
+                  </View>
+  
+                  <View>
+                    <TouchableOpacity onPress={this.handleIncorrectAnswer}>
+                      <View style={[styles.btnContent, {paddingTop: 10}]}>
+                        <Ionicons style={[styles.btnText, styles.btnTextIcon, {color: 'tomato'}]} name="md-close" />
+                        <Text style={styles.btnText}>Incorrect</Text>
+                      </View>
+                    </TouchableOpacity>
+                  </View>
+  
+                </View>
+              </View>
+            )
+        }
+        </View>
+      )
+    }
+    return <Text>Loading...</Text>
   }
 }
 

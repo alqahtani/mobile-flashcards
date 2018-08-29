@@ -7,17 +7,21 @@ import { getDecks } from '../api'
 import { colors } from '../_DATA'
 
 export class DecksList extends Component {
+
+  state = {
+    decks: {},
+  }
+  
   static navigationOptions = {
     title: 'Decks List',
   }
 
-  state = {
-    decks: {}
-  }
 
   componentDidMount = () => {
     getDecks().then( result => {
-      this.setState(()=> ({ decks: JSON.parse(result) }))
+      if (result !== null) {
+        this.setState(()=> ({ decks: JSON.parse(result) }))
+      }
     })
   }
 
@@ -29,8 +33,8 @@ export class DecksList extends Component {
   
 
   render() {
-    const { decks } = this.state
-    const decksIds = typeof decks === 'object' ? Object.keys(decks).sort() : []
+    const { decks } = this.state;
+    const decksIds = typeof decks === 'object' ? Object.keys(decks).sort() : [];
     
     return (
       <View style={styles.container}>

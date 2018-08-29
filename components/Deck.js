@@ -35,7 +35,7 @@ export class Deck extends Component {
   }
 
   handleStartQuiz = () => {
-    this.props.navigation.navigate('Quiz')
+    this.props.navigation.navigate('Quiz', { deck: this.state.deck })
   }
 
   handleRemoveDeck = () => {

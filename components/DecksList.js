@@ -2,39 +2,65 @@ import React, { Component } from 'react'
 import { StyleSheet, Text, View, SafeAreaView, ScrollView, TouchableOpacity } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
 
-import { data, colors } from '../_DATA'
 import DeckItem from './DeckItem'
+import { getDecks } from '../api'
+import { colors } from '../_DATA'
 
 export class DecksList extends Component {
   static navigationOptions = {
     title: 'Decks List',
-  };
-
-  handleAddNewDeck = () => {
-    alert('Add New Deck Clicked!')
   }
 
+  state = {
+    decks: {}
+  }
+
+  componentDidMount = () => {
+    getDecks().then( result => {
+      this.setState(()=> ({ decks: JSON.parse(result) }))
+    })
+  }
+
+  componentDidUpdate = () => {
+    getDecks().then( result => {
+      this.setState(()=> ({ decks: JSON.parse(result) }))
+    })
+  }
+  
+
   render() {
-    const decks = Object.keys(data)
+    const { decks } = this.state
+    const decksIds = typeof decks === 'object' ? Object.keys(decks).sort() : []
+    
     return (
       <View style={styles.container}>
 
-        <View style={styles.decksListContainer}>
-          <ScrollView showsVerticalScrollIndicator={false}>
-            {decks.map((deck, index) => {
-              return (
-                <DeckItem 
-                  key={deck} 
-                  title={data[deck].title} 
-                  cardsNum={data[deck].questions.length} 
-                  color={colors[index]} 
-                  index={index}
-                  navigation={this.props.navigation} 
-                />
-              );
-            })}
-        </ScrollView>
-          </View>
+        {decksIds.length > 0 
+          ? ( 
+              <View style={styles.decksListContainer}>
+                <ScrollView showsVerticalScrollIndicator={false}>
+                  {decksIds.map((deckId, index) => {
+                    return (
+                      <DeckItem 
+                        key={deckId} 
+                        title={decks[deckId].title} 
+                        cardsNum={decks[deckId].questions.length} 
+                        color={colors[index]} 
+                        index={index}
+                        navigation={this.props.navigation} 
+                      />
+                    );
+                  })}
+                </ScrollView>
+              </View>
+            )
+          : (
+            <View style={styles.noDecksContainer}>
+            <Ionicons style={[styles.btnText, styles.btnTextIcon, {color: '#f1c40f', fontSize: 100}]} name="md-information-circle" />
+            <Text style={{color: '#95a5a6', fontSize:20}}>No Decks yet?</Text>
+            <Text style={{color: '#95a5a6', fontSize:20}}>Try to add new one!</Text>
+            </View>
+        )}
 
         <SafeAreaView style={styles.addNewDeckContainer}>
           <TouchableOpacity onPress={()=> this.props.navigation.navigate('AddDeck')}>
@@ -58,14 +84,17 @@ const styles = StyleSheet.create({
     flex:1,
     paddingRight: 30,
     paddingLeft: 30,
-    // paddingTop: 10,
+  },
+  noDecksContainer: {
+    flex:1,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   addNewDeckContainer: {
     height: 95,
     paddingBottom: 20,
     alignItems: 'center',
     justifyContent: 'center',
-    // backgroundColor: 'tomato',
   },
   btnContent: {
     paddingTop: 30,

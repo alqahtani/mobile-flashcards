@@ -2,6 +2,8 @@ import React, { Component } from 'react'
 import { Text, View, TextInput, StyleSheet, TouchableOpacity, KeyboardAvoidingView } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
 
+import { addCardToDeck } from '../api'
+
 export class AddCard extends Component {
   static navigationOptions = {
     title: 'Add Card',
@@ -13,7 +15,16 @@ export class AddCard extends Component {
   }
 
   handleSubmit = () => {
-    // Todo: Handling Submit new Card
+    const deckTitle = this.props.navigation.state.params.id
+    const card = {
+        question: this.state.cardQuestion,
+        answer: this.state.cardAnswer,
+    }
+    addCardToDeck(deckTitle, card)
+      .then(()=>{
+        this.props.navigation.state.params.refresh()
+        this.props.navigation.goBack()
+      })
   }
 
   render() {

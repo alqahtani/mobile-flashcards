@@ -3,13 +3,14 @@ import { Text, TouchableOpacity, StyleSheet } from 'react-native'
 
 export class DeckItem extends Component {
   render() {
+    const data = {
+      title: this.props.title,
+      color: this.props.color,
+    }
+
     return (
       <TouchableOpacity
-        onPress={ () => {
-            // console.log(this.props.navigation)
-            this.props.navigation.navigate('Deck')
-          }
-        }
+        onPress={ () => this.props.navigation.navigate('Deck', data) }
         style={[
           styles.card, 
           {

@@ -35,7 +35,11 @@ export class Deck extends Component {
   }
 
   handleStartQuiz = () => {
-    this.props.navigation.navigate('Quiz', { deck: this.state.deck })
+    if (this.state.deck.questions.length === 0) {
+      alert('Add some questions first!')
+    } else {
+      this.props.navigation.navigate('Quiz', { deck: this.state.deck })
+    }
   }
 
   handleRemoveDeck = () => {

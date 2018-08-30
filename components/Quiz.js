@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { Text, View, StyleSheet, TouchableOpacity } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
 
+import { clearLocalNotification, setLocalNotification } from '../helpers'
 import Result from './Result'
 
 const CustomHeader = ({ title, numOfQuestions, current }) => (
@@ -56,12 +57,30 @@ export class Quiz extends Component {
     this.nextQuestion()
   }
   
+  backToDeck = () => {
+    this.props.navigation.goBack()
+  }
+
+  restartQuiz = () => {
+    this.setState(()=> ({ 
+      flipped: false,
+      correct: 0, 
+      incorrect: 0, 
+    }))
+    this.props.navigation.setParams({
+      current: 1
+    })
+  }
 
   render() {
     const { deck, current } = this.props.navigation.state.params
 
     if( current > deck.questions. length ) {
-      return <Result correct={this.state.correct} total={deck.questions.length} />
+      //Clear Local Notification and set new one for tomorrow
+      clearLocalNotification()
+      .then(setLocalNotification)
+
+      return <Result correct={this.state.correct} total={deck.questions.length} backToDeck={this.backToDeck} restartQuiz={this.restartQuiz} />
     }
     
     if(!isNaN(current)){

@@ -1,6 +1,8 @@
 import React from 'react';
 import { createStackNavigator } from 'react-navigation';
 
+import { setLocalNotification } from './helpers'
+
 import DecksList from './components/DecksList'
 import Deck from './components/Deck'
 import Quiz from './components/Quiz'
@@ -21,6 +23,10 @@ const Stack = createStackNavigator(
 );
 
 export default class App extends React.Component {
+  componentDidMount = () => {
+    setLocalNotification()
+  }
+  
   render() {
     return (
       <Stack />

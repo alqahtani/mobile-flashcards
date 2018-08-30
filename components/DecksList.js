@@ -26,6 +26,10 @@ export class DecksList extends Component {
   }
 
   componentDidUpdate = () => {
+    this.refresh()
+  }
+
+  refresh = () => {
     getDecks().then( result => {
       this.setState(()=> ({ decks: JSON.parse(result) }))
     })
@@ -67,7 +71,7 @@ export class DecksList extends Component {
         )}
 
         <SafeAreaView style={styles.addNewDeckContainer}>
-          <TouchableOpacity onPress={()=> this.props.navigation.navigate('AddDeck')}>
+          <TouchableOpacity onPress={()=> this.props.navigation.navigate('AddDeck', { refresh: this.refresh})}>
             <View style={styles.btnContent}>
               <Ionicons style={[styles.btnText, styles.btnTextIcon]} name="ios-add-circle" />
               <Text style={styles.btnText}>Add New Deck</Text>

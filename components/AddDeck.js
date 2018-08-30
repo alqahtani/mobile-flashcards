@@ -18,7 +18,8 @@ export class AddDeck extends Component {
     
     addDeck(deckTitle)
       .then(()=>{
-        this.props.navigation.navigate('Decks')
+        this.props.navigation.state.params.refresh()
+        this.props.navigation.goBack()
       })
   }
 

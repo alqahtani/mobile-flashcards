@@ -1,4 +1,4 @@
-# Would You Rather
+# Flash Cards App
 
 ### Project for course (3| React Native) on Udacity React Nano degree
 

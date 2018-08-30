@@ -17,6 +17,13 @@
 - [Option #1] Scan the QR code that generated after running the command `npm start` or `yarn start`
 - [Option #2] Press `i` to run on "iOS" emulator / press `a` torun on "Android" emulator.
 
+## App Tested On
+
+- iOS emulator "iPhone X"
+- Android emulator "Genymotion" on "Google Pixel 2XL"
+- Expo Client and device running "iOS" on "iPhone X"
+- Expo Client and device running "Android" on "Samsung Galaxy S7"
+
 ---
 
 Thanks I hope you find it interesting.
